@@ -13,8 +13,8 @@ export default {
     },
 
     methods: {
-        ...mapActions(['getDeckPoker', 'drawHand', 'placeBet5', 'discardHand', 'chooseCards', 'evaluateHand','reset']),
-        
+        ...mapActions(['getDeckPoker', 'drawHand', 'placeBet5', 'discardHand', 'chooseCards', 'evaluateHand', 'reset']),
+
     },
 
 };
@@ -24,50 +24,101 @@ export default {
 
 <template>
     <h1>Poker</h1>
-    <button @click="getDeckPoker">Get a new Deck</button>
-    <div v-if="poker.deckId">
-        <h2>Choose your bet!</h2>
-        <div class="well" style="margin-bottom: 30px">
-            <div
-                v-if="poker.allowedBet == true"
-                style="padding-top: 5px; padding-bottom: 5px;"
-                class="text-center"
-            >
+    <button id="button2" @click="getDeckPoker">Get a new Deck</button>
+
+    <div id="flexMain" v-if="poker.deckId" class>
+        <div>
+            <Coins />
+            <div v-if="poker.allowedBet == true">
                 <span style="font-weight: 900; text-transform: uppercase; font-size: 14px">
-                    <span >Place bet:&nbsp;</span>
+                    <span>Place bet:&nbsp;</span>
                 </span>
                 <span class="btn-group" role="group">
-                    <button type="button" v-on:click="placeBet5({bet: 5})">5</button>
-                    <button type="button" v-on:click="placeBet5({bet: 25})">25</button>
-                    <button type="button" v-on:click="placeBet5({bet: 50})">50</button>
+                    <button id="button2" v-on:click="placeBet5({ bet: 5 })">5</button>
+                    <button id="button2" v-on:click="placeBet5({ bet: 25 })">25</button>
+                    <button id="button2" v-on:click="placeBet5({ bet: 50 })">50</button>
                 </span>
-
-                &nbsp;&nbsp;
-                <!--<div style="margin-top: 15px; font-weight: 700">
-                 Coins bet: {{coins_bet}} | Discard Index: {{discards}} | Cards left: {{deck.length}} |  Draws: {{numberOfDraws}}
-                </div>-->
+                <h2>Choose your bet!</h2>
             </div>
 
-            <Coins />
-            
-            <button v-if="poker.showHandButton == true" class="mr-4 bg-orange-600 text-gray-800 w-32" @click="drawHand">Draw a hand</button>
+            <button v-if="poker.showHandButton == true" @click="drawHand">Draw a hand</button>
         </div>
 
-        
+        <div>
+            <div class="flex justify-evenly">
+                <PokerHand />
+            </div>
+            <div class="flex justify-evenly">
+                <button
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('0')"
+                    v-on:click="chooseCards({ cardNr: 0 })"
+                >Undo</button>
+                <button
+                    v-else-if="poker.showDiscardOptions == true"
+                    v-on:click="chooseCards({ cardNr: 0 })"
+                >Discard card 1</button>
+                <button
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('1')"
+                    v-on:click="chooseCards({ cardNr: 1 })"
+                >Undo</button>
+                <button
+                    v-else-if="poker.showDiscardOptions == true"
+                    v-on:click="chooseCards({ cardNr: 1 })"
+                >Discard card 2</button>
+                <button
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('2')"
+                    v-on:click="chooseCards({ cardNr: 2 })"
+                >Undo</button>
+                <button
+                    v-else-if="poker.showDiscardOptions == true"
+                    v-on:click="chooseCards({ cardNr: 2 })"
+                >Discard card 3</button>
+                <button
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('3')"
+                    v-on:click="chooseCards({ cardNr: 3 })"
+                >Undo</button>
+                <button
+                    v-else-if="poker.showDiscardOptions == true"
+                    v-on:click="chooseCards({ cardNr: 3 })"
+                >Discard card 4</button>
+                <button
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('4')"
+                    v-on:click="chooseCards({ cardNr: 4 })"
+                >Undo</button>
+                <button
+                    v-else-if="poker.showDiscardOptions == true"
+                    v-on:click="chooseCards({ cardNr: 4 })"
+                >Discard card 5</button>
+            </div>
+        </div>
 
-        <PokerHand />
-        <button type="button" v-if="poker.showDiscardOptions == true" v-on:click="chooseCards({cardNr: 0})">Discard card 1</button>
-        <button type="button" v-if="poker.showDiscardOptions == true" v-on:click="chooseCards({cardNr: 1})">Discard card 2</button>
-        <button type="button" v-if="poker.showDiscardOptions == true" v-on:click="chooseCards({cardNr: 2})">Discard card 3</button>
-        <button type="button" v-if="poker.showDiscardOptions == true" v-on:click="chooseCards({cardNr: 3})">Discard card 4</button>
-        <button type="button" v-if="poker.showDiscardOptions == true" v-on:click="chooseCards({cardNr: 4})">Discard card 5</button>
-        <br>
-        <button type="button" v-if="poker.showDiscardButton == true" v-on:click="discardHand">Discard</button>
-        <button type="button" v-if="poker.showEvaluationButton == true" v-on:click="evaluateHand">Evaluate Hand</button>
-        <button type="button" v-if="poker.showRestartButton == true" v-on:click="reset">Go again!</button>
+        <div>
+            <button v-if="poker.showDiscardButton == true" v-on:click="discardHand">Discard</button>
+            <br />
+            <button
+                v-if="poker.showEvaluationButton == true"
+                v-on:click="evaluateHand"
+            >Evaluate Hand</button>
+            <br />
+            <button v-if="poker.showRestartButton == true" v-on:click="reset">Go again!</button>
+        </div>
     </div>
 
-    <div v-else>Please draw a new deck!</div>
+    <div v-else>
+        <p>Please draw a new deck!</p>
+    </div>
+
+    <div id="payout">
+        <h2>Payouts:</h2>
+        <p>Two Pairs: x1</p>
+        <p>Three of a kind: x3</p>
+        <p>Straight: x4</p>
+        <p>Flush: x5</p>
+        <p>Full House: x7</p>
+        <p>Four of a kind: x25</p>
+        <p>Straight Flush: x75</p>
+        <p>Royal Flush: x500</p>
+    </div>
 </template>
 
 <style>

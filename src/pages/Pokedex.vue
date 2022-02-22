@@ -34,6 +34,7 @@ export default {
 
 <template>
   <h1>Pokedex</h1>
-
-  <Pokemon v-for="(item, index) in list" :key="index" :pokemon="item" />
+  <div id="pokeFlex" class="flex">
+    <Pokemon v-for="(item, index) in list" :key="index" :pokemon="item" />
+  </div>
 </template>

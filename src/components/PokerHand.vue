@@ -1,10 +1,6 @@
 <template>
-  <div class="flex">
-    <Card
-      v-for="card in cards"
-      :card="card"
-      :key="`${card.value}-${card.symbol}`"
-    />
+  <div class="flex content-center justify-center m-auto">
+    <Card v-for="card in cards" :card="card" :key="`${card.value}-${card.symbol}`" />
   </div>
 </template>
 

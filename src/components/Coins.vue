@@ -1,7 +1,7 @@
 <template>
-  <h1>Coins: {{ coins }}</h1>
-  <h1>Coins Bet: {{ coinsBet }}</h1>
-  <h1>Coins Won: {{ coinsWon }}</h1>
+  <h2>Coins: {{ coins }}</h2>
+  <h2>Coins Bet: {{ coinsBet }}</h2>
+  <h2>Coins Won: {{ coinsWon }}</h2>
 </template>
 
 <script>

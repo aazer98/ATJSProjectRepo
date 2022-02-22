@@ -5,6 +5,7 @@ import Home from './pages/Home.vue';
 import Pokedex from './pages/Pokedex.vue';
 import Guesser from './pages/Guesser.vue';
 import Poker from './pages/Poker.vue';
+import Calculator from './pages/Calculator.vue';
 import { createStore } from 'vuex';
 
 
@@ -97,6 +98,8 @@ const store = createStore({
     pushNewCard(state, newCard) {
       state.guesser.cards.push(newCard);
     },
+
+    //adds card to hand, closes betting window and shows discard options
     pushNewHand(state, newCard) {
       state.poker.allowedBet = false;
       state.poker.showDiscardOptions = true;
@@ -105,6 +108,8 @@ const store = createStore({
       state.poker.showHandButton = false;
       console.log(state.poker.cards)
     },
+
+    //handles the amount of money you bet
     bet5(state, bet) {
       state.poker.coins += state.poker.priorBet
       state.poker.coinsBet = 0;
@@ -114,45 +119,49 @@ const store = createStore({
       state.poker.showHandButton = true;
     },
 
+    //adds or removes a card from the discarding array and changes the buttons looks
     addCardToRemove(state, card) {
-
       if (state.poker.cardsToSplice.includes(card)) {
         var index = state.poker.cardsToSplice.indexOf(card);
         state.poker.cardsToSplice.splice(index, 1);
-        console.log(state.poker.cardsToSplice)
+        console.log(state.poker.cards)
       } else {
         state.poker.cardsToSplice.push(card)
-        console.log(state.poker.cardsToSplice)
+        console.log(state.poker.cards)
       }
 
-      if(state.poker.cardsToSplice.length > 0){
+      if (state.poker.cardsToSplice.length > 0) {
         state.poker.showDiscardButton = true;
       } else {
         state.poker.showDiscardButton = false;
       }
     },
 
+    //removes cards from hand and adds new ones; hides the discard option buttons
     changeHand(state) {
       var i = 0;
       while (i <= state.poker.cardsToSplice.length - 1) {
-
         var index = state.poker.cardsToSplice[i];
         state.poker.cards.splice(index - i, 1);
         i++
       }
-      console.log(state.poker.cards)
+
       state.poker.showDiscardButton = false;
       state.poker.showDiscardOptions = false;
     },
 
+    //evaluates what kind of hand you currently hold
     evaluate(state) {
+
+      //turns the cards array into a string in order to help with reading out the info
       let cardsString = JSON.stringify(state.poker.cards)
 
-      console.log("evaluating")
+      //function to read out how many times a certain string exists in the stringified array
       function countOccurences(string, word) {
         return string.split(word).length - 1;
       }
 
+      //finding out occurences of numbers
       var countAce = countOccurences(cardsString, `"value":"ACE"`);
       var countTwo = countOccurences(cardsString, `"value":"2"`);
       var countThree = countOccurences(cardsString, `"value":"3"`);
@@ -167,11 +176,13 @@ const store = createStore({
       var countQueen = countOccurences(cardsString, `"value":"QUEEN"`);
       var countKing = countOccurences(cardsString, `"value":"KING"`);
 
+      //finding out occurences of symbols
       var countSpades = countOccurences(cardsString, `♠️`);
       var countClubs = countOccurences(cardsString, `♣️`);
       var countDiamonds = countOccurences(cardsString, `♦️`);
       var countHearts = countOccurences(cardsString, `♥️`);
 
+      //finding out the amount of pairs
       var NrOfPairs = 0
       if (countAce == 2) { NrOfPairs++ };
       if (countTwo == 2) { NrOfPairs++ };
@@ -190,6 +201,7 @@ const store = createStore({
       var paylines = "NONE"
       if (NrOfPairs == 2) { paylines = "TWO_PAIRS" }
 
+      //checks if you have three of a kind
       var triple = false;
       if (countAce == 3 ||
         countTwo == 3 ||
@@ -205,6 +217,7 @@ const store = createStore({
         countQueen == 3 ||
         countKing == 3) { triple = true; paylines = "TRIPLE" }
 
+      //checks if you have a straight
       var straight = false;
       if (countAce == 1 && countTwo == 1 && countThree == 1 && countFour == 1 && countFive == 1 ||
         countTwo == 1 && countThree == 1 && countFour == 1 && countFive == 1 && countSix == 1 ||
@@ -217,15 +230,15 @@ const store = createStore({
         countNine == 1 && countTen == 1 && countJack == 1 && countQueen == 1 && countKing == 1 ||
         countTen == 1 && countJack == 1 && countQueen == 1 && countKing == 1 && countAce == 1) { straight = true; paylines = "STRAIGHT" }
 
-
+      //checks if you have a flush
       var flush = false
       if (countSpades == 5 || countDiamonds == 5 || countClubs == 5 || countHearts == 5) { flush = true; paylines = "FLUSH" }
 
-
+      //checks if you have a full house
       var fullHouse = false;
       if (NrOfPairs == 1 && triple == true) { fullHouse == true; paylines = "FULL_HOUSE" }
 
-
+      //checks if you have four of a kind
       var fourOfAKind = false;
       if (countAce == 4 ||
         countTwo == 4 ||
@@ -242,9 +255,11 @@ const store = createStore({
         countKing == 4) { fourOfAKind = true }
       if (fourOfAKind == true) { paylines = "FOUR_OF_A_KIND" }
 
+      //checks if you have a straight flush
       var straightFlush = false;
       if (flush == true && straight == true) { straightFlush == true; paylines = "STRAIGHT_FLUSH" }
 
+      //checks if you have a royal flush
       var straightRoyalFlush = false;
       if (countAce == 1 &&
         countTen == 1 &&
@@ -253,24 +268,26 @@ const store = createStore({
         countKing == 1 &&
         flush == true) { straightRoyalFlush = true; paylines = "STRAIGHT_ROYAL_FLUSH" }
 
-        if(paylines == "NONE"){state.poker.coinsMultiplicator = 0}
-        else if(paylines == "TWO_PAIRS"){state.poker.coinsMultiplicator = 1}
-        else if(paylines == "TRIPLE"){state.poker.coinsMultiplicator = 3}
-        else if(paylines == "STRAIGHT"){state.poker.coinsMultiplicator = 4}
-        else if(paylines == "FLUSH"){state.poker.coinsMultiplicator = 5}
-        else if(paylines == "FULL_HOUSE"){state.poker.coinsMultiplicator = 7}
-        else if(paylines == "FOUR_OF_A_KIND"){state.poker.coinsMultiplicator = 25}
-        else if(paylines == "STRAIGHT_FLUSH"){state.poker.coinsMultiplicator = 75}
-        else if(paylines == "STRAIGHT_ROYAL_FLUSH"){state.poker.coinsMultiplicator = 500}
+      //sets the coin multiplicator depending on the hand you got
+      if (paylines == "NONE") { state.poker.coinsMultiplicator = 0 }
+      else if (paylines == "TWO_PAIRS") { state.poker.coinsMultiplicator = 1 }
+      else if (paylines == "TRIPLE") { state.poker.coinsMultiplicator = 3 }
+      else if (paylines == "STRAIGHT") { state.poker.coinsMultiplicator = 4 }
+      else if (paylines == "FLUSH") { state.poker.coinsMultiplicator = 5 }
+      else if (paylines == "FULL_HOUSE") { state.poker.coinsMultiplicator = 7 }
+      else if (paylines == "FOUR_OF_A_KIND") { state.poker.coinsMultiplicator = 25 }
+      else if (paylines == "STRAIGHT_FLUSH") { state.poker.coinsMultiplicator = 75 }
+      else if (paylines == "STRAIGHT_ROYAL_FLUSH") { state.poker.coinsMultiplicator = 500 }
 
-        state.poker.coinsWon = state.poker.coinsBet * state.poker.coinsMultiplicator;
+      //calculates coins won and adds them to your coins
+      state.poker.coinsWon = state.poker.coinsBet * state.poker.coinsMultiplicator;
 
-        state.poker.coins += state.poker.coinsWon;
+      state.poker.coins += state.poker.coinsWon;
 
-        state.poker.showRestartButton = true;
-        state.poker.showEvaluationButton = false;
-        state.poker.showDiscardButton= false;
-      state.poker.showDiscardOptions= false;
+      state.poker.showRestartButton = true;
+      state.poker.showEvaluationButton = false;
+      state.poker.showDiscardButton = false;
+      state.poker.showDiscardOptions = false;
     }
 
   },
@@ -310,6 +327,7 @@ const store = createStore({
       commit('pushNewCard', cleanCard);
     },
 
+    //draws hand for poker game
     async drawHand({ commit, getters }) {
       let i = 0;
       while (i <= 4) {
@@ -330,6 +348,7 @@ const store = createStore({
       state.commit('bet5', data.bet)
     },
 
+    //adds cards to the discard array
     chooseCards: (state, data) => {
 
       var discard = JSON.stringify(data.cardNr)
@@ -337,6 +356,7 @@ const store = createStore({
 
     },
 
+    //initiates discarding function
     async discardHand({ state, commit, getters }) {
       console.log(state.poker.cards)
       commit('changeHand')
@@ -354,29 +374,28 @@ const store = createStore({
         commit('pushNewHand', cleanCard);
         i++;
       }
-
       state.poker.showDiscardOptions = false;
     },
 
     evaluateHand({ commit }) {
-
       commit('evaluate');
     },
 
+    //prepares for the next round
     async reset({ state, commit }) {
-      state.poker.cards.splice(0,5)
-      state.poker.cardsToSplice.splice(0,5)
+      state.poker.cards.splice(0, 5)
+      state.poker.cardsToSplice.splice(0, 5)
       state.poker.coinsBet = 0;
       state.poker.coinsWon = 0;
       state.poker.allowedBet = true;
       state.poker.priorBet = 0;
-      state.poker.showRestartButton= false;
+      state.poker.showRestartButton = false;
       const { deck_id } = await fetch(API).then((r) => r.json());
       commit('setDeckIdPoker', deck_id);
       console.log(state.poker.cards)
       console.log(state.poker.cardsToSplice)
-      
-      
+
+
     },
   },
 });
@@ -391,6 +410,7 @@ const router = createRouter({
     { path: '/pokedex', component: Pokedex },
     { path: '/guesser', component: Guesser },
     { path: '/poker', component: Poker },
+    { path: '/calculator', component: Calculator }
   ],
 });
 

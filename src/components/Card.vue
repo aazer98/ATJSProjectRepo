@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="p-8">
     <img :src="card.image" :alt="altText" />
   </div>
 </template>

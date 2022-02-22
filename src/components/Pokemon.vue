@@ -21,8 +21,8 @@ export default {
 </script>
 
 <template>
-  <div>
-    <img :src="imgPath" :alt="name" />
-    <h2>{{ name }}</h2>
+  <div id="pokemonCards">
+    <img id="pokeImg" :src="imgPath" :alt="name" />
+    <h2 id="pokeH2">{{ name }}</h2>
   </div>
 </template>
