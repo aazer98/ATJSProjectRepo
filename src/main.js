@@ -140,9 +140,12 @@ const store = createStore({
     //removes cards from hand and adds new ones; hides the discard option buttons
     changeHand(state) {
       var i = 0;
+      state.poker.cardsToSplice.sort(function(a, b) {
+        return a - b;
+      });
       while (i <= state.poker.cardsToSplice.length - 1) {
-        var index = state.poker.cardsToSplice[i];
-        state.poker.cards.splice(index - i, 1);
+        
+        state.poker.cards.splice(state.poker.cardsToSplice[i] - i, 1);
         i++
       }
 
@@ -351,8 +354,7 @@ const store = createStore({
     //adds cards to the discard array
     chooseCards: (state, data) => {
 
-      var discard = JSON.stringify(data.cardNr)
-      state.commit('addCardToRemove', discard)
+      state.commit('addCardToRemove', data.cardNr)
 
     },
 

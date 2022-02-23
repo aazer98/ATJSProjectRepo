@@ -50,7 +50,7 @@ export default {
             </div>
             <div class="flex justify-evenly">
                 <button
-                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('0')"
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes(0)"
                     v-on:click="chooseCards({ cardNr: 0 })"
                 >Undo</button>
                 <button
@@ -58,7 +58,7 @@ export default {
                     v-on:click="chooseCards({ cardNr: 0 })"
                 >Discard card 1</button>
                 <button
-                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('1')"
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes(1)"
                     v-on:click="chooseCards({ cardNr: 1 })"
                 >Undo</button>
                 <button
@@ -66,7 +66,7 @@ export default {
                     v-on:click="chooseCards({ cardNr: 1 })"
                 >Discard card 2</button>
                 <button
-                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('2')"
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes(2)"
                     v-on:click="chooseCards({ cardNr: 2 })"
                 >Undo</button>
                 <button
@@ -74,7 +74,7 @@ export default {
                     v-on:click="chooseCards({ cardNr: 2 })"
                 >Discard card 3</button>
                 <button
-                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('3')"
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes(3)"
                     v-on:click="chooseCards({ cardNr: 3 })"
                 >Undo</button>
                 <button
@@ -82,7 +82,7 @@ export default {
                     v-on:click="chooseCards({ cardNr: 3 })"
                 >Discard card 4</button>
                 <button
-                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes('4')"
+                    v-if="poker.showDiscardOptions == true && poker.cardsToSplice.includes(4)"
                     v-on:click="chooseCards({ cardNr: 4 })"
                 >Undo</button>
                 <button
